@@ -83,6 +83,14 @@
     </div>
 
     <script>
+        function formatDateGreek(date) {
+            return date.toLocaleDateString('el-GR', {
+                day: 'numeric',
+                month: 'long',
+                year: 'numeric'
+            });
+        }
+
         function calculate() {
             const dateInput = document.getElementById('date').value;
             const event = document.getElementById('event').value;
@@ -97,18 +105,15 @@
             let menstruationDate, ovulationDate;
 
             if (event === 'ovulation') {
-                // Αν είναι ημερομηνία ωορρηξίας, τότε η έμμηνος ρύση θα ξεκινήσει σε περίπου 14 ημέρες
                 menstruationDate = new Date(date);
                 menstruationDate.setDate(menstruationDate.getDate() + 14);
                 ovulationDate = date;
             } else {
-                // Αν είναι ημερομηνία έναρξης έμμηνο ρύσεως, τότε η ωορρηξία θα συμβεί σε περίπου 14 ημέρες
                 ovulationDate = new Date(date);
                 ovulationDate.setDate(ovulationDate.getDate() + 14);
                 menstruationDate = date;
             }
 
-            // Υπολογισμός των φάσεων του κύκλου για δύο μήνες
             const phases = [];
             for (let i = 0; i < 2; i++) {
                 const currentMenstruationDate = new Date(menstruationDate);
@@ -163,19 +168,15 @@
                 );
             }
 
-            // Ταξινόμηση των φάσεων με βάση την ημερομηνία έναρξης
             phases.sort((a, b) => a.start - b.start);
 
-            // Δημιουργία λίστας αποτελεσμάτων ταξινομημένων κατά ημερομηνίες
-            let resultHTML = `
-                <h2>Αποτελέσματα</h2>
-            `;
+            let resultHTML = `<h2>Αποτελέσματα</h2>`;
 
             phases.forEach(phase => {
                 resultHTML += `
                     <div class="result-item">
                         <h3>${phase.name}</h3>
-                        <p><strong>Ημερομηνίες:</strong> ${phase.start.toLocaleDateString()} έως ${phase.end.toLocaleDateString()}</p>
+                        <p><strong>Ημερομηνίες:</strong> ${formatDateGreek(phase.start)} έως ${formatDateGreek(phase.end)}</p>
                         <p><strong>Ψυχολογικές Διακυμάνσεις:</strong> ${phase.psychologicalChanges}</p>
                         <p><strong>Συμβουλές για τον Άντρα:</strong> ${phase.advice}</p>
                     </div>

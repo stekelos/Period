@@ -1,167 +1,181 @@
 <!DOCTYPE html>
 <html lang="el">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Υπολογιστής Ψυχολογικών Διακυμάνσεων</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      padding: 20px;
-      box-sizing: border-box;
-    }
-    .container {
-      max-width: 600px;
-      margin: auto;
-    }
-    .input-container {
-      margin-bottom: 20px;
-    }
-    .input-container label {
-      display: block;
-      margin-bottom: 5px;
-    }
-    input, select, button {
-      width: 100%;
-      padding: 10px;
-      margin-top: 5px;
-      border-radius: 4px;
-      border: 1px solid #ccc;
-      box-sizing: border-box;
-    }
-    button {
-      background-color: #4CAF50;
-      color: white;
-      border: none;
-    }
-    button:hover {
-      background-color: #45a049;
-    }
-    .result-item {
-      background: #f9f9f9;
-      margin-bottom: 15px;
-      padding: 10px;
-      border-radius: 4px;
-      border: 1px solid #ccc;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Υπολογιστής Ψυχολογικών Διακυμάνσεων</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        .input-container {
+            margin-bottom: 20px;
+        }
+        .input-container label {
+            display: block;
+            margin-bottom: 5px;
+        }
+        .input-container input, .input-container select, button {
+            width: 100%;
+            padding: 10px;
+            margin-top: 5px;
+        }
+        button {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        .result-container {
+            margin-top: 20px;
+        }
+        .result-item {
+            margin-bottom: 15px;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            background-color: #f9f9f9;
+        }
+        .result-item h3 {
+            margin-top: 0;
+        }
+    </style>
 </head>
 <body>
-  <div class="container">
-    <h1>Υπολογιστής Ψυχολογικών Διακυμάνσεων</h1>
-    <div class="input-container">
-      <label for="date">Εισάγετε Ημερομηνία:</label>
-      <input type="date" id="date" />
+    <div class="container">
+        <h1>Υπολογιστής Ψυχολογικών Διακυμάνσεων</h1>
+        <div class="input-container">
+            <label for="date">Εισάγετε Ημερομηνία:</label>
+            <input type="date" id="date">
+        </div>
+        <div class="input-container">
+            <label for="event">Επιλέξτε Γεγονός:</label>
+            <select id="event">
+                <option value="ovulation">Ωορρηξία</option>
+                <option value="menstruation">Έναρξη Έμμηνου Ρύσεως</option>
+            </select>
+        </div>
+        <button onclick="calculate()">Υπολογισμός</button>
+        <div id="result" class="result-container"></div>
     </div>
-    <div class="input-container">
-      <label for="event">Επιλέξτε Γεγονός:</label>
-      <select id="event">
-        <option value="menstruation">Έναρξη Έμμηνου ρύσεως</option>
-        <option value="ovulation">Ωορρηξία</option>
-      </select>
-    </div>
-    <button onclick="calculate()">Υπολογισμός</button>
-    <div id="result"></div>
-  </div>
 
-  <script>
-    function formatDateGreek(date) {
-      return date.toLocaleDateString('el-GR', {
-        day: 'numeric',
-        month: 'long',
-        year: 'numeric'
-      });
-    }
+    <script>
+        function formatGreekDate(date) {
+            return date.toLocaleDateString('el-GR', {
+                day: '2-digit',
+                month: 'long',
+                year: 'numeric'
+            });
+        }
 
-    function addDays(date, days) {
-      const newDate = new Date(date);
-      newDate.setDate(newDate.getDate() + days);
-      return newDate;
-    }
+        function calculate() {
+            const dateInput = document.getElementById('date').value;
+            const event = document.getElementById('event').value;
+            const resultDiv = document.getElementById('result');
 
-    function calculate() {
-      const dateInput = document.getElementById("date").value;
-      const event = document.getElementById("event").value;
-      const resultDiv = document.getElementById("result");
+            if (!dateInput) {
+                resultDiv.innerHTML = 'Παρακαλώ εισάγετε μια ημερομηνία.';
+                return;
+            }
 
-      if (!dateInput) {
-        resultDiv.innerHTML = "Παρακαλώ εισάγετε μια ημερομηνία.";
-        return;
-      }
+            const baseDate = new Date(dateInput);
+            let menstruationStart, ovulationDate;
 
-      const inputDate = new Date(dateInput);
-      let menstruationStart;
+            if (event === 'ovulation') {
+                ovulationDate = new Date(baseDate);
+                menstruationStart = new Date(baseDate);
+                menstruationStart.setDate(menstruationStart.getDate() + 14);
+            } else {
+                menstruationStart = new Date(baseDate);
+                ovulationDate = new Date(baseDate);
+                ovulationDate.setDate(ovulationDate.getDate() + 14);
+            }
 
-      if (event === "menstruation") {
-        menstruationStart = new Date(inputDate);
-      } else {
-        menstruationStart = addDays(inputDate, -14); // αν έδωσε ωορρηξία, μείον 14 μέρες
-      }
+            let currentStart = new Date(baseDate);
+            const results = [];
 
-      const phases = [];
-      let currentStart = new Date(menstruationStart);
+            for (let i = 0; i < 2; i++) {
+                // Menstruation phase (7 days)
+                const menstruationEnd = new Date(currentStart);
+                menstruationEnd.setDate(menstruationEnd.getDate() + 6);
+                results.push({
+                    name: "Φάση της Έμμηνου Ρύσεως",
+                    start: new Date(currentStart),
+                    end: new Date(menstruationEnd),
+                    psychologicalChanges: "Κόπωση, ευερεθιστότητα, πόνος στην κοιλιά, πονοκέφαλοι",
+                    advice: "Προσφορά βοήθειας στις καθημερινές εργασίες, ενδιαφέρον για τις ανάγκες της, δημιουργία ασφαλούς περιβάλλοντος."
+                });
 
-      for (let cycle = 0; cycle < 2; cycle++) {
-        // Έμμηνος ρύση: 7 μέρες
-        const menstruationEnd = addDays(currentStart, 6);
-        phases.push({
-          name: "Φάση της Έμμηνου ρύσεως",
-          start: new Date(currentStart),
-          end: new Date(menstruationEnd),
-          psychologicalChanges: "Κόπωση, ευερεθιστότητα, πόνος στην κοιλιά, πονοκέφαλοι",
-          advice: "Προσφορά βοήθειας στις καθημερινές εργασίες, παρουσίαση ενδιαφέροντος για τις ανάγκες της, παροχή ενός ασφαλούς χώρου για να εκφράσει τα συναισθήματά της."
-        });
+                // Follicular phase (περίπου 7 μέρες μέχρι την ωορρηξία)
+                const follicularStart = new Date(menstruationEnd);
+                follicularStart.setDate(follicularStart.getDate() + 1);
+                const follicularEnd = new Date(follicularStart);
+                follicularEnd.setDate(follicularEnd.getDate() + 6);
+                results.push({
+                    name: "Φάση του Ωοθυλακίου",
+                    start: new Date(follicularStart),
+                    end: new Date(follicularEnd),
+                    psychologicalChanges: "Βελτίωση διάθεσης, ενέργειας και συγκέντρωσης",
+                    advice: "Απολαύστε κοινές δραστηριότητες και χτίστε θετικές εμπειρίες."
+                });
 
-        // Φάση ωοθυλακίου: από τέλος έμμηνου μέχρι ωορρηξία (συνήθως 7 μέρες)
-        const follicularStart = addDays(menstruationEnd, 1);
-        const follicularEnd = addDays(follicularStart, 6);
-        phases.push({
-          name: "Φάση του Ωοθυλακίου",
-          start: new Date(follicularStart),
-          end: new Date(follicularEnd),
-          psychologicalChanges: "Βελτίωση της διάθεσης, αύξηση της ενέργειας, βελτίωση της συγκέντρωσης",
-          advice: "Απολαύστε μαζί τις καλές στιγμές, προγραμματίστε δραστηριότητες που και οι δύο απολαμβάνετε."
-        });
+                // Ovulation phase (2 μέρες)
+                const ovulationStart = new Date(follicularEnd);
+                ovulationStart.setDate(ovulationStart.getDate() + 1);
+                const ovulationEnd = new Date(ovulationStart);
+                ovulationEnd.setDate(ovulationEnd.getDate() + 1);
+                results.push({
+                    name: "Ωορρηξία",
+                    start: new Date(ovulationStart),
+                    end: new Date(ovulationEnd),
+                    psychologicalChanges: "Αύξηση λίμπιντο, ενέργειας, αυτοπεποίθησης",
+                    advice: "Εκμεταλλευτείτε την αυξημένη διάθεση, προγραμματίστε ρομαντικές ή διασκεδαστικές στιγμές."
+                });
 
-        // Ωορρηξία: 2 μέρες
-        const ovulationStart = addDays(follicularEnd, 1);
-        const ovulationEnd = addDays(ovulationStart, 1);
-        phases.push({
-          name: "Ωορρηξία",
-          start: new Date(ovulationStart),
-          end: new Date(ovulationEnd),
-          psychologicalChanges: "Αύξηση της λίμπιντο, βελτίωση της διάθεσης, αύξηση της ενέργειας",
-          advice: "Επωφεληθείτε από την αυξημένη ενέργεια και τη βελτιωμένη διάθεση, προγραμματίστε ρομαντικές δραστηριότητες."
-        });
+                // Luteal phase (περίπου 14 μέρες)
+                const lutealStart = new Date(ovulationEnd);
+                lutealStart.setDate(lutealStart.getDate() + 1);
+                const lutealEnd = new Date(lutealStart);
+                lutealEnd.setDate(lutealEnd.getDate() + 13);
+                results.push({
+                    name: "Φάση του Ωχρού Σώματος",
+                    start: new Date(lutealStart),
+                    end: new Date(lutealEnd),
+                    psychologicalChanges: "Ευερεθιστότητα, θλίψη, άγχος, κόπωση, αυξημένη όρεξη, αλλαγές στον ύπνο",
+                    advice: "Δείξτε κατανόηση και στήριξη. Μην πιέζετε. Ρωτήστε πώς μπορείτε να βοηθήσετε."
+                });
 
-        // Ωχρό σώμα: μέχρι την επόμενη έμμηνο ρύση (~13 μέρες)
-        const lutealStart = addDays(ovulationEnd, 1);
-        const lutealEnd = addDays(lutealStart, 12);
-        phases.push({
-          name: "Φάση του Ωχρού Σώματος",
-          start: new Date(lutealStart),
-          end: new Date(lutealEnd),
-          psychologicalChanges: "Ευερεθιστότητα, θλίψη, άγχος, κόπωση, αύξηση της όρεξης, αλλαγές στον ύπνο",
-          advice: "Παρουσίαση κατανόησης και υπομονής, βοήθεια στις καθημερινές εργασίες, παρουσίαση ενδιαφέροντος για τις ανάγκες της."
-        });
+                // Update για επόμενο κύκλο
+                currentStart = new Date(lutealEnd);
+                currentStart.setDate(currentStart.getDate() + 1);
+            }
 
-        currentStart = addDays(lutealEnd, 1); // ξεκίνα επόμενο κύκλο από την επόμενη μέρα
-      }
+            // Εμφάνιση αποτελεσμάτων
+            let html = "<h2>Αποτελέσματα</h2>";
+            results.forEach(phase => {
+                html += `
+                    <div class="result-item">
+                        <h3>${phase.name}</h3>
+                        <p><strong>Ημερομηνίες:</strong> ${formatGreekDate(phase.start)} έως ${formatGreekDate(phase.end)}</p>
+                        <p><strong>Ψυχολογικές Διακυμάνσεις:</strong> ${phase.psychologicalChanges}</p>
+                        <p><strong>Συμβουλές για τον Άντρα:</strong> ${phase.advice}</p>
+                    </div>
+                `;
+            });
 
-      let resultHTML = "<h2>Αποτελέσματα</h2>";
-      phases.forEach(phase => {
-        resultHTML += `
-          <div class="result-item">
-            <h3>${phase.name}</h3>
-            <p><strong>Ημερομηνίες:</strong> ${formatDateGreek(phase.start)} έως ${formatDateGreek(phase.end)}</p>
-            <p><strong>Ψυχολογικές Διακυμάνσεις:</strong> ${phase.psychologicalChanges}</p>
-            <p><strong>Συμβουλές για τον Άντρα:</strong> ${phase.advice}</p>
-          </div>
-        `;
-      });
-
-      resultDiv.innerHTML = resultHTML;
-    }
-  </script>
+            resultDiv.innerHTML = html;
+        }
+    </script>
 </body>
 </html>

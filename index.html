@@ -7,32 +7,43 @@
     <style>
         body {
             font-family: Arial, sans-serif;
-            margin: 20px;
+            margin: 0;
+            padding: 20px;
+            box-sizing: border-box;
         }
         .container {
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
+            width: 100%;
+            max-width: 600px;
+            margin: 0 auto;
         }
         .input-container {
+            width: 100%;
             margin-bottom: 20px;
         }
         .input-container label {
-            margin-right: 10px;
+            display: block;
+            margin-bottom: 5px;
         }
-        .input-container input {
-            padding: 8px;
+        .input-container input, .input-container select {
+            width: 100%;
+            padding: 10px;
             border: 1px solid #ccc;
             border-radius: 4px;
+            box-sizing: border-box;
         }
         button {
-            padding: 10px 20px;
+            width: 100%;
+            padding: 10px;
             background-color: #4CAF50;
             color: white;
             border: none;
             border-radius: 4px;
             cursor: pointer;
+            font-size: 16px;
         }
         button:hover {
             background-color: #45a049;
@@ -49,6 +60,15 @@
             padding: 10px;
             text-align: left;
         }
+        th {
+            background-color: #f2f2f2;
+        }
+        @media screen and (max-width: 600px) {
+            table {
+                display: block;
+                overflow-x: auto;
+            }
+        }
     </style>
 </head>
 <body>
@@ -62,7 +82,7 @@
             <label for="event">Επιλέξτε Γεγονός:</label>
             <select id="event">
                 <option value="ovulation">Ωορρηξία</option>
-                <option value="menstruation">Έναρξη Έμμηνο ρεύσεως</option>
+                <option value="menstruation">Έναρξη Έμμηνο ρύσεως</option>
             </select>
         </div>
         <button onclick="calculate()">Υπολογισμός</button>
@@ -84,12 +104,12 @@
             let menstruationDate, ovulationDate;
 
             if (event === 'ovulation') {
-                // Αν είναι ημερομηνία ωορρηξίας, τότε η έμμηνος ρεύση θα ξεκινήσει σε περίπου 14 ημέρες
+                // Αν είναι ημερομηνία ωορρηξίας, τότε η έμμηνος ρύση θα ξεκινήσει σε περίπου 14 ημέρες
                 menstruationDate = new Date(date);
                 menstruationDate.setDate(menstruationDate.getDate() + 14);
                 ovulationDate = date;
             } else {
-                // Αν είναι ημερομηνία έναρξης έμμηνο ρεύσεως, τότε η ωορρηξία θα συμβεί σε περίπου 14 ημέρες
+                // Αν είναι ημερομηνία έναρξης έμμηνο ρύσεως, τότε η ωορρηξία θα συμβεί σε περίπου 14 ημέρες
                 ovulationDate = new Date(date);
                 ovulationDate.setDate(ovulationDate.getDate() + 14);
                 menstruationDate = date;
@@ -120,7 +140,7 @@
 
                 phases.push(
                     {
-                        name: "Φάση της Έμμηνο ρεύσεως",
+                        name: "Φάση της Έμμηνο ρύσεως",
                         start: new Date(currentMenstruationDate),
                         end: new Date(currentMenstruationDate.getTime() + 7 * 24 * 60 * 60 * 1000),
                         psychologicalChanges: "Κόπωση, ευερεθιστότητα, πόνος στην κοιλιά, πονοκέφαλοι",
@@ -156,13 +176,14 @@
             // Δημιουργία πίνακα αποτελεσμάτων ταξινομημένου κατά ημερομηνίες
             let resultHTML = `
                 <h2>Αποτελέσματα</h2>
-                <table>
-                    <tr>
-                        <th>Φάση</th>
-                        <th>Ημερομηνίες</th>
-                        <th>Ψυχολογικές Διακυμάνσεις</th>
-                        <th>Συμβουλές για τον Άντρα</th>
-                    </tr>
+                <div style="overflow-x: auto;">
+                    <table>
+                        <tr>
+                            <th>Φάση</th>
+                            <th>Ημερομηνίες</th>
+                            <th>Ψυχολογικές Διακυμάνσεις</th>
+                            <th>Συμβουλές για τον Άντρα</th>
+                        </tr>
             `;
 
             phases.forEach(phase => {
@@ -176,7 +197,7 @@
                 `;
             });
 
-            resultHTML += `</table>`;
+            resultHTML += `</table></div>`;
             resultDiv.innerHTML = resultHTML;
         }
     </script>

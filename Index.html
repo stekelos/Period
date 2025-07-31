@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="el">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Υπολογιστής Ψυχολογικών Διακυμάνσεων</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        .container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+        .input-container {
+            margin-bottom: 20px;
+        }
+        .input-container label {
+            margin-right: 10px;
+        }
+        .input-container input {
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        button {
+            padding: 10px 20px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        table, th, td {
+            border: 1px solid black;
+        }
+        th, td {
+            padding: 10px;
+            text-align: left;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Υπολογιστής Ψυχολογικών Διακυμάνσεων</h1>
+        <div class="input-container">
+            <label for="date">Εισάγετε Ημερομηνία:</label>
+            <input type="date" id="date">
+        </div>
+        <div class="input-container">
+            <label for="event">Επιλέξτε Γεγονός:</label>
+            <select id="event">
+                <option value="ovulation">Ωορρηξία</option>
+                <option value="menstruation">Έναρξη Έμμηνο ρεύσεως</option>
+            </select>
+        </div>
+        <button onclick="calculate()">Υπολογισμός</button>
+        <div id="result"></div>
+    </div>
+
+    <script>
+        function calculate() {
+            const dateInput = document.getElementById('date').value;
+            const event = document.getElementById('event').value;
+            const resultDiv = document.getElementById('result');
+
+            if (!dateInput) {
+                resultDiv.innerHTML = 'Παρακαλώ εισάγετε μια ημερομηνία.';
+                return;
+            }
+
+            const date = new Date(dateInput);
+            let menstruationDate, ovulationDate;
+
+            if (event === 'ovulation') {
+                // Αν είναι ημερομηνία ωορρηξίας, τότε η έμμηνος ρεύση θα ξεκινήσει σε περίπου 14 ημέρες
+                menstruationDate = new Date(date);
+                menstruationDate.setDate(menstruationDate.getDate() + 14);
+                ovulationDate = date;
+            } else {
+                // Αν είναι ημερομηνία έναρξης έμμηνο ρεύσεως, τότε η ωορρηξία θα συμβεί σε περίπου 14 ημέρες
+                ovulationDate = new Date(date);
+                ovulationDate.setDate(ovulationDate.getDate() + 14);
+                menstruationDate = date;
+            }
+
+            // Υπολογισμός των φάσεων του κύκλου για δύο μήνες
+            const phases = [];
+            for (let i = 0; i < 2; i++) {
+                const currentMenstruationDate = new Date(menstruationDate);
+                currentMenstruationDate.setMonth(currentMenstruationDate.getMonth() + i);
+
+                const currentOvulationDate = new Date(ovulationDate);
+                currentOvulationDate.setMonth(currentOvulationDate.getMonth() + i);
+
+                const follicularPhaseStart = new Date(currentMenstruationDate);
+                const follicularPhaseEnd = new Date(currentOvulationDate);
+                follicularPhaseEnd.setDate(follicularPhaseEnd.getDate() - 1);
+
+                const ovulationPhaseStart = new Date(currentOvulationDate);
+                const ovulationPhaseEnd = new Date(currentOvulationDate);
+                ovulationPhaseEnd.setDate(ovulationPhaseEnd.getDate() + 1);
+
+                const lutealPhaseStart = new Date(ovulationPhaseEnd);
+                lutealPhaseStart.setDate(lutealPhaseStart.getDate() + 1);
+                const lutealPhaseEnd = new Date(currentMenstruationDate);
+                lutealPhaseEnd.setDate(lutealPhaseEnd.getDate() - 1);
+                lutealPhaseEnd.setMonth(lutealPhaseEnd.getMonth() + 1);
+
+                phases.push(
+                    {
+                        name: "Φάση της Έμμηνο ρεύσεως",
+                        start: new Date(currentMenstruationDate),
+                        end: new Date(currentMenstruationDate.getTime() + 7 * 24 * 60 * 60 * 1000),
+                        psychologicalChanges: "Κόπωση, ευερεθιστότητα, πόνος στην κοιλιά, πονοκέφαλοι",
+                        advice: "Προσφορά βοήθειας στις καθημερινές εργασίες, παρουσίαση ενδιαφέροντος για τις ανάγκες της, παροχή ενός ασφαλούς χώρου για να εκφράσει τα συναισθήματά της."
+                    },
+                    {
+                        name: "Φάση του Ωοθυλακίου",
+                        start: follicularPhaseStart,
+                        end: follicularPhaseEnd,
+                        psychologicalChanges: "Βελτίωση της διάθεσης, αύξηση της ενέργειας, βελτίωση της συγκέντρωσης",
+                        advice: "Απολαύστε μαζί τις καλές στιγμές, προγραμματίστε δραστηριότητες που και οι δύο απολαμβάνετε."
+                    },
+                    {
+                        name: "Ωορρηξία",
+                        start: ovulationPhaseStart,
+                        end: ovulationPhaseEnd,
+                        psychologicalChanges: "Αύξηση της λίμπιντο, βελτίωση της διάθεσης, αύξηση της ενέργειας",
+                        advice: "Επωφεληθείτε από την αυξημένη ενέργεια και τη βελτιωμένη διάθεση, προγραμματίστε ρομαντικές δραστηριότητες."
+                    },
+                    {
+                        name: "Φάση του Ωχρού Σώματος",
+                        start: lutealPhaseStart,
+                        end: lutealPhaseEnd,
+                        psychologicalChanges: "Ευερεθιστότητα, θλίψη, άγχος, κόπωση, αύξηση της όρεξης, αλλαγές στον ύπνο",
+                        advice: "Παρουσίαση κατανόησης και υπομονής, βοήθεια στις καθημερινές εργασίες, παρουσίαση ενδιαφέροντος για τις ανάγκες της."
+                    }
+                );
+            }
+
+            // Ταξινόμηση των φάσεων με βάση την ημερομηνία έναρξης
+            phases.sort((a, b) => a.start - b.start);
+
+            // Δημιουργία πίνακα αποτελεσμάτων ταξινομημένου κατά ημερομηνίες
+            let resultHTML = `
+                <h2>Αποτελέσματα</h2>
+                <table>
+                    <tr>
+                        <th>Φάση</th>
+                        <th>Ημερομηνίες</th>
+                        <th>Ψυχολογικές Διακυμάνσεις</th>
+                        <th>Συμβουλές για τον Άντρα</th>
+                    </tr>
+            `;
+
+            phases.forEach(phase => {
+                resultHTML += `
+                    <tr>
+                        <td>${phase.name}</td>
+                        <td>${phase.start.toDateString()} έως ${phase.end.toDateString()}</td>
+                        <td>${phase.psychologicalChanges}</td>
+                        <td>${phase.advice}</td>
+                    </tr>
+                `;
+            });
+
+            resultHTML += `</table>`;
+            resultDiv.innerHTML = resultHTML;
+        }
+    </script>
+</body>
+</html>

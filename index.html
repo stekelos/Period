@@ -56,8 +56,8 @@
     <div class="input-container">
       <label for="event">Επιλέξτε Γεγονός:</label>
       <select id="event">
+        <option value="menstruation">Έναρξη Έμμηνου ρύσεως</option>
         <option value="ovulation">Ωορρηξία</option>
-        <option value="menstruation">Έναρξη Έμμηνο ρύσεως</option>
       </select>
     </div>
     <button onclick="calculate()">Υπολογισμός</button>
@@ -89,61 +89,64 @@
         return;
       }
 
-      const baseDate = new Date(dateInput);
-      let baseMenstruationDate, baseOvulationDate;
+      const inputDate = new Date(dateInput);
+      let menstruationStart;
 
-      if (event === "ovulation") {
-        baseOvulationDate = new Date(baseDate);
-        baseMenstruationDate = addDays(baseOvulationDate, 14);
+      if (event === "menstruation") {
+        menstruationStart = new Date(inputDate);
       } else {
-        baseMenstruationDate = new Date(baseDate);
-        baseOvulationDate = addDays(baseMenstruationDate, 14);
+        menstruationStart = addDays(inputDate, -14); // αν έδωσε ωορρηξία, μείον 14 μέρες
       }
 
       const phases = [];
+      let currentStart = new Date(menstruationStart);
 
-      for (let i = 0; i < 2; i++) {
-        const menstruationDate = new Date(baseMenstruationDate);
-        menstruationDate.setMonth(menstruationDate.getMonth() + i);
-        const ovulationDate = addDays(menstruationDate, 14);
-
-        // Υπολογισμός όλων των φάσεων σε σωστή σειρά
-        const menstruationPhase = {
-          name: "Φάση της Έμμηνο ρύσεως",
-          start: new Date(menstruationDate),
-          end: addDays(menstruationDate, 6),
+      for (let cycle = 0; cycle < 2; cycle++) {
+        // Έμμηνος ρύση: 7 μέρες
+        const menstruationEnd = addDays(currentStart, 6);
+        phases.push({
+          name: "Φάση της Έμμηνου ρύσεως",
+          start: new Date(currentStart),
+          end: new Date(menstruationEnd),
           psychologicalChanges: "Κόπωση, ευερεθιστότητα, πόνος στην κοιλιά, πονοκέφαλοι",
           advice: "Προσφορά βοήθειας στις καθημερινές εργασίες, παρουσίαση ενδιαφέροντος για τις ανάγκες της, παροχή ενός ασφαλούς χώρου για να εκφράσει τα συναισθήματά της."
-        };
+        });
 
-        const follicularPhase = {
+        // Φάση ωοθυλακίου: από τέλος έμμηνου μέχρι ωορρηξία (συνήθως 7 μέρες)
+        const follicularStart = addDays(menstruationEnd, 1);
+        const follicularEnd = addDays(follicularStart, 6);
+        phases.push({
           name: "Φάση του Ωοθυλακίου",
-          start: addDays(menstruationDate, 7),
-          end: addDays(ovulationDate, -1),
+          start: new Date(follicularStart),
+          end: new Date(follicularEnd),
           psychologicalChanges: "Βελτίωση της διάθεσης, αύξηση της ενέργειας, βελτίωση της συγκέντρωσης",
           advice: "Απολαύστε μαζί τις καλές στιγμές, προγραμματίστε δραστηριότητες που και οι δύο απολαμβάνετε."
-        };
+        });
 
-        const ovulationPhase = {
+        // Ωορρηξία: 2 μέρες
+        const ovulationStart = addDays(follicularEnd, 1);
+        const ovulationEnd = addDays(ovulationStart, 1);
+        phases.push({
           name: "Ωορρηξία",
-          start: new Date(ovulationDate),
-          end: addDays(ovulationDate, 1),
+          start: new Date(ovulationStart),
+          end: new Date(ovulationEnd),
           psychologicalChanges: "Αύξηση της λίμπιντο, βελτίωση της διάθεσης, αύξηση της ενέργειας",
           advice: "Επωφεληθείτε από την αυξημένη ενέργεια και τη βελτιωμένη διάθεση, προγραμματίστε ρομαντικές δραστηριότητες."
-        };
+        });
 
-        const lutealPhase = {
+        // Ωχρό σώμα: μέχρι την επόμενη έμμηνο ρύση (~13 μέρες)
+        const lutealStart = addDays(ovulationEnd, 1);
+        const lutealEnd = addDays(lutealStart, 12);
+        phases.push({
           name: "Φάση του Ωχρού Σώματος",
-          start: addDays(ovulationDate, 2),
-          end: addDays(menstruationDate, 28), // περίπου 14 μέρες μετά την ωορρηξία
+          start: new Date(lutealStart),
+          end: new Date(lutealEnd),
           psychologicalChanges: "Ευερεθιστότητα, θλίψη, άγχος, κόπωση, αύξηση της όρεξης, αλλαγές στον ύπνο",
           advice: "Παρουσίαση κατανόησης και υπομονής, βοήθεια στις καθημερινές εργασίες, παρουσίαση ενδιαφέροντος για τις ανάγκες της."
-        };
+        });
 
-        phases.push(menstruationPhase, follicularPhase, ovulationPhase, lutealPhase);
+        currentStart = addDays(lutealEnd, 1); // ξεκίνα επόμενο κύκλο από την επόμενη μέρα
       }
-
-      phases.sort((a, b) => a.start - b.start);
 
       let resultHTML = "<h2>Αποτελέσματα</h2>";
       phases.forEach(phase => {

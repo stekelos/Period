@@ -48,26 +48,19 @@
         button:hover {
             background-color: #45a049;
         }
-        table {
+        .result-container {
             width: 100%;
-            border-collapse: collapse;
             margin-top: 20px;
         }
-        table, th, td {
-            border: 1px solid black;
-        }
-        th, td {
+        .result-item {
+            margin-bottom: 15px;
             padding: 10px;
-            text-align: left;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            background-color: #f9f9f9;
         }
-        th {
-            background-color: #f2f2f2;
-        }
-        @media screen and (max-width: 600px) {
-            table {
-                display: block;
-                overflow-x: auto;
-            }
+        .result-item h3 {
+            margin-top: 0;
         }
     </style>
 </head>
@@ -86,7 +79,7 @@
             </select>
         </div>
         <button onclick="calculate()">Υπολογισμός</button>
-        <div id="result"></div>
+        <div id="result" class="result-container"></div>
     </div>
 
     <script>
@@ -173,31 +166,22 @@
             // Ταξινόμηση των φάσεων με βάση την ημερομηνία έναρξης
             phases.sort((a, b) => a.start - b.start);
 
-            // Δημιουργία πίνακα αποτελεσμάτων ταξινομημένου κατά ημερομηνίες
+            // Δημιουργία λίστας αποτελεσμάτων ταξινομημένων κατά ημερομηνίες
             let resultHTML = `
                 <h2>Αποτελέσματα</h2>
-                <div style="overflow-x: auto;">
-                    <table>
-                        <tr>
-                            <th>Φάση</th>
-                            <th>Ημερομηνίες</th>
-                            <th>Ψυχολογικές Διακυμάνσεις</th>
-                            <th>Συμβουλές για τον Άντρα</th>
-                        </tr>
             `;
 
             phases.forEach(phase => {
                 resultHTML += `
-                    <tr>
-                        <td>${phase.name}</td>
-                        <td>${phase.start.toLocaleDateString()} έως ${phase.end.toLocaleDateString()}</td>
-                        <td>${phase.psychologicalChanges}</td>
-                        <td>${phase.advice}</td>
-                    </tr>
+                    <div class="result-item">
+                        <h3>${phase.name}</h3>
+                        <p><strong>Ημερομηνίες:</strong> ${phase.start.toLocaleDateString()} έως ${phase.end.toLocaleDateString()}</p>
+                        <p><strong>Ψυχολογικές Διακυμάνσεις:</strong> ${phase.psychologicalChanges}</p>
+                        <p><strong>Συμβουλές για τον Άντρα:</strong> ${phase.advice}</p>
+                    </div>
                 `;
             });
 
-            resultHTML += `</table></div>`;
             resultDiv.innerHTML = resultHTML;
         }
     </script>

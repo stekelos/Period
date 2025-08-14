@@ -4,6 +4,13 @@
   <meta charset="UTF-8">
   <title>Υπολογιστής Ψυχολογικών Διακυμάνσεων</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <!-- PWA META -->
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <link rel="manifest" href="manifest.json">
+  <link rel="apple-touch-icon" href="icon.png">
+
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -69,6 +76,10 @@
   </div>
 
   <script>
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('service-worker.js');
+    }
+
     const greekOptions = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
 
     function formatDate(date) {
@@ -98,7 +109,6 @@
         ovulationDate.setDate(ovulationDate.getDate() + 14);
       }
 
-      // Υπολογισμός 1 κύκλου πριν, 2 μετά (σύνολο 3)
       const cycleLength = 28;
       const phases = [];
 
@@ -129,28 +139,28 @@
             start: menstruationStart,
             end: menstruationEnd,
             psychologicalChanges: "Κούραση, ευερεθιστότητα, πόνοι, ευαισθησία, συναισθηματική φόρτιση.",
-            advice: "Πρόσφερε ζεστασιά και φροντίδα. Δείξε κατανόηση χωρίς πίεση. Μαγείρεψε κάτι ζεστό ή άφησέ τη να ξεκουραστεί χωρίς ενοχές."
+            advice: "Πρόσφερε ζεστασιά και φροντίδα..."
           },
           {
             name: "Φάση του Ωοθυλακίου",
             start: follicularStart,
             end: ovulationStart,
             psychologicalChanges: "Αισιοδοξία, κοινωνικότητα, ανανέωση διάθεσης, ενέργεια.",
-            advice: "Ενθάρρυνε δημιουργικές ιδέες, προγραμμάτισε κοινές δραστηριότητες, δείξε ενθουσιασμό για τα σχέδιά της."
+            advice: "Ενθάρρυνε δημιουργικές ιδέες..."
           },
           {
             name: "Φάση Ωορρηξίας",
             start: ovulationStart,
             end: ovulationEnd,
             psychologicalChanges: "Αυξημένη λίμπιντο, αυτοπεποίθηση, υψηλή ενέργεια.",
-            advice: "Δημιούργησε ρομαντικό περιβάλλον, δώσε χώρο να λάμψει κοινωνικά και συναισθηματικά. Πρότεινε μια ρομαντική βραδιά ή εξόρμηση."
+            advice: "Δημιούργησε ρομαντικό περιβάλλον..."
           },
           {
             name: "Φάση Ωχρού Σώματος",
             start: lutealStart,
             end: lutealEnd,
-            psychologicalChanges: "Αλλαγές στη διάθεση, κόπωση, αυξημένη όρεξη, ένταση, ευαισθησία, ανάγκη για επιβεβαίωση.",
-            advice: "Μην αντιδράς αμυντικά. Ρώτα «τι θα σε βοηθούσε σήμερα;». Πρόσφερε μασάζ, φτιάξε το χώρο ή ένα γλυκό. Υπενθύμισέ της πόσα καταφέρνει."
+            psychologicalChanges: "Αλλαγές στη διάθεση, κόπωση...",
+            advice: "Μην αντιδράς αμυντικά..."
           }
         );
       }
